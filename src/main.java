@@ -241,6 +241,37 @@ public class main {
 
                 break;
 
+            case 4 :
+                // Update Patient Blood Type
+                System.out.println("Entering \"Update Patient Blood Type\" Mode");
+                System.out.println("--------------------------------------------------");
+                System.out.print( "Enter the Patient’s Healthcare ID: " );
+                userInput = scanner.nextLine();
+                System.out.print( "\nEnter the Updated Blood Type: " );
+                String updatedBloodType = scanner.nextLine();
+                // Performing the query
+                try {
+                    Statement stmt = connection.createStatement();
+                    String str = "UPDATE PATIENT SET BLOODTYPE = '" + updatedBloodType + "' WHERE PATIENT.HealthCareID =" + userInput;
+                    ResultSet rset = stmt.executeQuery(str);
+
+                    if (rset.next()) {
+                        System.out.println("Updated Successfully!");
+
+                    } else {
+                        System.out.println("Healthcare ID does not exist!");
+                    }
+                    rset.close();
+                    stmt.close();
+                    connection.close();
+
+                } catch (SQLException e) {
+                    System.out.println("Update Data Failed! Check output console");
+                    e.printStackTrace();
+                    return;
+                }
+                break;
+
             default:
                 System.out.println("OPTION VALUE IS NOT WITHIN ACCEPTED RANGE");
                 connection.close();
