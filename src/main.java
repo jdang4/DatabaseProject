@@ -119,6 +119,59 @@ public class main {
                     e.printStackTrace();
                     return;
                 }
+
+            case 2 :
+                // Report Primary Care Physician Information
+                System.out.println("Entering \"Report Primary Care Physician Information\" Mode");
+                System.out.println("--------------------------------------------------");
+                System.out.print( "Enter Primary Care Physician ID: " );
+                userInput = scanner.nextLine();
+
+                // Performing the query
+                try {
+                    Statement stmt = connection.createStatement();
+                    String str = "SELECT PCP.PHYSICIANID, D.FIRSTNAME, D.LASTNAME, PCP.SPECIALTY, PCP.MEDICALFACILITY " +
+                            "FROM PCP JOIN DOCTOR D on PCP.PHYSICIANID = D.PHYSICIANID and PCP.ROLE = D.ROLE " +
+                            "WHERE PCP.physicianID = " + userInput;
+                    ResultSet rset = stmt.executeQuery(str);
+
+                    if (!rset.isBeforeFirst()) {
+                        System.out.println("NO DATA FOUND!!!");
+
+                    } else {
+                        int physID = 0;
+                        String firstName, lastName, specialty, medFacility;
+
+                        firstName = lastName = specialty = medFacility = "";
+
+                        // Process the results
+                        while (rset.next()) {
+                            physID = rset.getInt("physicianID");
+                            firstName = rset.getString("firstName");
+                            lastName = rset.getString("lastName");
+                            specialty = rset.getString("specialty");
+                            medFacility = rset.getString("medicalFacility");
+                        } // end while
+
+                        System.out.println("\n-------------------------------------------------");
+                        System.out.println("        Primary Care Physician Information");
+                        System.out.println("-------------------------------------------------");
+                        System.out.println("Full Name: " + firstName + " " + lastName);
+                        System.out.println("Physician ID: " + physID);
+                        System.out.println("Specialty: " + specialty);
+                        System.out.println("Medical Facility: " + medFacility);
+                        System.out.println("-------------------------------------------------\n");
+
+                        rset.close();
+                        stmt.close();
+                        connection.close();
+                    }
+
+                } catch (SQLException e) {
+                    System.out.println("Get Data Failed! Check output console");
+                    e.printStackTrace();
+                    return;
+                }
                 break;
 
             default:
