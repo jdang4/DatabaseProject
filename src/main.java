@@ -1,6 +1,9 @@
 import java.sql.*;
+import java.util.Scanner;
 
 public class main {
+
+    private static Scanner scanner = new Scanner( System.in );
 
     public static void main(String[] args) throws SQLException {
         int version = -1;
@@ -63,6 +66,66 @@ public class main {
         }
         System.out.println("Oracle JDBC Driver Connected!\n");
 
-        connection.close();
+        String userInput;
+        switch (version) {
+            case 1:
+                // Report Patient Information
+                System.out.println("Entering \"Report Patient Information\" Mode");
+                System.out.println("--------------------------------------------------");
+                System.out.print("Enter Patient’s Healthcare ID: ");
+                userInput = scanner.nextLine();
+                // Performing the query
+                try {
+                    Statement stmt = connection.createStatement();
+                    String str = "SELECT * FROM PATIENT WHERE HEALTHCAREID =" + userInput;
+                    ResultSet rset = stmt.executeQuery(str);
+
+                    if (!rset.isBeforeFirst()) {
+                        System.out.println("NO DATA FOUND!!!");
+
+                    } else {
+                        int healthID = 0;
+                        String firstName, lastName, city, state, birthDate, bloodType;
+                        firstName = lastName = city = state = birthDate = bloodType = "";
+                        // Process the results
+                        while (rset.next()) {
+                            healthID = rset.getInt("healthCareID");
+                            firstName = rset.getString("firstName");
+                            lastName = rset.getString("lastName");
+                            city = rset.getString("city");
+                            state = rset.getString("state");
+                            birthDate = rset.getString("birthDate");
+                            bloodType = rset.getString("bloodType");
+                        } // end while
+
+                        System.out.println("\n-------------------------------------------------");
+                        System.out.println("Patient Information:");
+                        System.out.println("Healthcare ID: " + healthID);
+                        System.out.println("First Name: " + firstName);
+                        System.out.println("Last Name: " + lastName);
+                        System.out.println("City: " + city);
+                        System.out.println("State: " + state);
+                        System.out.println("Birth Date: " + birthDate);
+                        System.out.println("Blood Type: " + bloodType);
+                        System.out.println("-------------------------------------------------\n");
+
+                        rset.close();
+                        stmt.close();
+                        connection.close();
+                    }
+
+                } catch (SQLException e) {
+                    System.out.println("Get Data Failed! Check output console");
+                    e.printStackTrace();
+                    return;
+                }
+                break;
+
+            default:
+                System.out.println("OPTION VALUE IS NOT WITHIN ACCEPTED RANGE");
+                connection.close();
+                System.exit(-1);
+                break;
+        }
     }
 }
