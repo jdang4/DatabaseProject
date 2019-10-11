@@ -174,6 +174,73 @@ public class main {
                 }
                 break;
 
+            case 3 :
+                // Report Operation Information
+                System.out.println("Entering \"Operation Information\" Mode");
+                System.out.println("--------------------------------------------------");
+                System.out.print( "Enter Operation Invoice Number: " );
+                userInput = scanner.nextLine();
+
+                try {
+                    Statement stmt = connection.createStatement();
+                    String str = "Select O.INVOICENUMBER, O.OPERATIONDATE, D.FIRSTNAME as DFirstName, D.LASTNAME as DLastName, " +
+                            "S.BOARDCERTIFIED, P.FIRSTNAME, P.LASTNAME, P.BLOODTYPE, P.CITY, P.STATE " +
+                            "from Operation O join Surgeon S on O.physicianID = S.physicianID " +
+                            "join Patient P on O.healthCareID = P.healthCareID join Doctor D on S.physicianID = D.physicianID " +
+                            "where invoiceNumber  =" + userInput;
+
+
+                    ResultSet rset = stmt.executeQuery(str);
+
+                    if (!rset.isBeforeFirst()) {
+                        System.out.println("NO DATA FOUND!!!");
+
+                    } else {
+                        int invoiceNumber = 0;
+                        String operationDate, firstName, lastName, boardCertified, pFirstN, pLastN, bloodType, city, state;
+
+                        operationDate = firstName = lastName = boardCertified = pFirstN = pLastN = bloodType = city = state = "";
+                        // Process the results
+                        while (rset.next()) {
+                            invoiceNumber = rset.getInt("invoiceNumber");
+                            operationDate = rset.getString("operationDate");
+                            firstName = rset.getString("DFirstName");
+                            lastName = rset.getString("DLastName");
+                            boardCertified = rset.getString("boardCertified");
+                            pFirstN = rset.getString("firstName");
+                            pLastN = rset.getString("lastName");
+                            bloodType = rset.getString("bloodType");
+                            city = rset.getString("city");
+                            state = rset.getString("state");
+
+                        }
+
+                        System.out.println("\n-------------------------------------------------");
+                        System.out.println("Operation Information");
+                        System.out.println("-------------------------------------------------");
+                        System.out.println("Invoice Number: " + invoiceNumber);
+                        System.out.println("Operation Date: " + operationDate);
+                        System.out.println("Surgeon Full Name: " + firstName + " " + lastName);
+                        System.out.println("Board Certified?: " + boardCertified);
+                        System.out.println("Patient Full Name: " + pFirstN + " " + pLastN);
+                        System.out.println("Blood Type: " + bloodType);
+                        System.out.println("City: " + city);
+                        System.out.println("State: " + state);
+                        System.out.println("-------------------------------------------------\n");
+                    }
+
+                    rset.close();
+                    stmt.close();
+                    connection.close();
+
+                } catch (SQLException e) {
+                    System.out.println("Get Data Failed! Check output console");
+                    e.printStackTrace();
+                    return;
+                }
+
+                break;
+
             default:
                 System.out.println("OPTION VALUE IS NOT WITHIN ACCEPTED RANGE");
                 connection.close();
